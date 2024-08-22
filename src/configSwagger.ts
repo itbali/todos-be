@@ -17,7 +17,7 @@ export const setupSwagger = (app: INestApplication) => {
         customCssUrl: [
             'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.14/swagger-ui.css',
         ],
-        // customfavIcon: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/favicon-32x32.png',
+        customfavIcon: 'https://static1.smartbear.co/swagger/media/assets/swagger_fav.png',
         customSiteTitle: 'Todo API Documentation',
     });
 };
