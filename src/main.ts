@@ -1,22 +1,23 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import {NestFactory} from '@nestjs/core';
+import {AppModule} from './app.module';
 import {setupSwagger} from "./configSwagger";
 
 const createAndSetupApp = async () => {
-  const app = await NestFactory.create(AppModule, { bodyParser: true });
-  setupSwagger(app);
+    const app = await NestFactory.create(AppModule, {bodyParser: true});
+    setupSwagger(app);
 
-  // Включение CORS для разработки
-  app.enableCors({
-    origin: '*',
-  });
+    // Включение CORS для разработки
+    app.enableCors({
+        origin: '*',
+    });
 
-  return app;
+    return app;
 }
 
 async function bootstrap() {
-  const app = await createAndSetupApp();
+    const app = await createAndSetupApp();
 
-  await app.listen(3000);
+    await app.listen(3000);
 }
+
 bootstrap();

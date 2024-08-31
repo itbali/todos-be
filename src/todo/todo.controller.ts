@@ -1,32 +1,36 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request, Query } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { TodoService } from './todo.service';
-import { CreateTodoDto } from './dto/create-todo.dto';
-import { UpdateTodoDto } from './dto/update-todo.dto';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {Body, Controller, Delete, Get, Param, Patch, Post, Query, Request, UseGuards} from '@nestjs/common';
+import {JwtAuthGuard} from '../auth/jwt-auth.guard';
+import {TodoService} from './todo.service';
+import {CreateTodoDto} from './dto/create-todo.dto';
+import {UpdateTodoDto} from './dto/update-todo.dto';
+import {ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
 
 @ApiTags('todos')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('todos')
 export class TodoController {
-    constructor(private readonly todoService: TodoService) {}
+    constructor(private readonly todoService: TodoService) {
+    }
 
-    @ApiOperation({ summary: 'Create a new todo item' })
-    @ApiResponse({ status: 201, description: 'Todo successfully created' })
+    @ApiOperation({summary: 'Create a new todo item'})
+    @ApiResponse({status: 201, description: 'Todo successfully created'})
     @Post()
     async create(@Body() createTodoDto: CreateTodoDto, @Request() req) {
         return this.todoService.create(createTodoDto.title, req.user._id);
     }
 
-    @ApiOperation({ summary: 'Get all todos for the logged-in user with filtering and pagination' })
-    @ApiResponse({ status: 200, description: 'Todos retrieved successfully' })
+    @ApiOperation({summary: 'Get all todos for the logged-in user with filtering and pagination'})
+    @ApiResponse({status: 200, description: 'Todos retrieved successfully'})
+    @ApiQuery({name: 'completed', required: false, type: Boolean, description: 'Filter by completion status'})
+    @ApiQuery({name: 'limit', required: false, type: Number, description: 'Limit the number of results'})
+    @ApiQuery({name: 'page', required: false, type: Number, description: 'Page number for pagination'})
     @Get()
     async findAll(
         @Request() req,
         @Query('completed') completed?: boolean,
-        @Query('limit') limit: number = 10,
-        @Query('page') page: number = 1
+        @Query('limit') limit = 10,  // Задаем значение по умолчанию
+        @Query('page') page = 1       // Задаем значение по умолчанию
     ) {
         const filter = {};
         if (completed !== undefined) {
@@ -37,15 +41,15 @@ export class TodoController {
         return this.todoService.findAll(req.user._id, filter, limit, skip);
     }
 
-    @ApiOperation({ summary: 'Update a todo item' })
-    @ApiResponse({ status: 200, description: 'Todo updated successfully' })
+    @ApiOperation({summary: 'Update a todo item'})
+    @ApiResponse({status: 200, description: 'Todo updated successfully'})
     @Patch(':id')
     async update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto, @Request() req) {
         return this.todoService.update(id, updateTodoDto.completed, req.user._id);
     }
 
-    @ApiOperation({ summary: 'Delete a todo item' })
-    @ApiResponse({ status: 200, description: 'Todo deleted successfully' })
+    @ApiOperation({summary: 'Delete a todo item'})
+    @ApiResponse({status: 200, description: 'Todo deleted successfully'})
     @Delete(':id')
     async delete(@Param('id') id: string, @Request() req) {
         return this.todoService.delete(id, req.user._id);
