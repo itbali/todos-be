@@ -41,6 +41,13 @@ export class TodoController {
         return this.todoService.findAll(req.user._id, filter, limit, skip);
     }
 
+    @ApiOperation({summary: 'Get a todo by title'})
+    @ApiResponse({status: 200, description: 'Todo retrieved successfully'})
+    @Get(':title')
+    async findByTitle(@Param('title') title: string, @Request() req) {
+        return this.todoService.findByTitle(title, req.user._id);
+    }
+
     @ApiOperation({summary: 'Update a todo item'})
     @ApiResponse({status: 200, description: 'Todo updated successfully'})
     @Patch(':id')

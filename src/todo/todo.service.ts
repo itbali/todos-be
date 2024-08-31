@@ -10,7 +10,13 @@ export class TodoService {
 
     async create(title: string, userId: string): Promise<Todo> {
         const newTodo = new this.todoModel({title, user: userId});
-        return newTodo.save();
+        const todo = await newTodo.save();
+        return todo.toObject({
+            versionKey: false, transform: (_doc, ret) => {
+                delete ret.user;
+                return ret;
+            }
+        });
     }
 
     async findAll(userId: string, filter?: any, limit?: number, skip?: number): Promise<Todo[]> {
@@ -18,6 +24,12 @@ export class TodoService {
             .find({user: userId, ...filter})
             .limit(limit)
             .skip(skip)
+            .select('-__v -user');
+    }
+
+    async findByTitle(title: string, userId: string): Promise<Todo> {
+        return this.todoModel
+            .findOne({title: {$regex: title, $options: 'i'}, user: userId})
             .select('-__v -user');
     }
 
