@@ -6,6 +6,10 @@ const createAndSetupApp = async () => {
     const app = await NestFactory.create(AppModule, {bodyParser: true});
     setupSwagger(app);
 
+    app.use((req, res, next) => {
+        console.log('Received request:', req.method, req.url, 'from', req.headers.origin);
+        next();
+    });
     // Включение CORS для разработки
     app.enableCors({
         origin: (origin, callback) => {
