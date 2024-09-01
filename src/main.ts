@@ -9,10 +9,9 @@ const createAndSetupApp = async () => {
     // Включение CORS для разработки
     app.enableCors({
         origin: (origin, callback) => {
-            const whitelist = ['http://localhost:3000', 'http://localhost:5173'];
 
-            console.log('origin', origin);
-            const allowed = !origin || whitelist.includes(origin) || origin.includes('vercel.app');
+            console.log('origin:', origin);
+            const allowed = !origin || origin.includes("localhost") || origin.includes('vercel.app');
             if (allowed) {
                 callback(null, true);
             } else {
