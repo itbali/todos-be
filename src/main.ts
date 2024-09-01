@@ -7,25 +7,20 @@ const createAndSetupApp = async () => {
     setupSwagger(app);
 
     // Включение CORS для разработки
-    app.enableCors((req, callback) => {
-        const corsOptions = {
-            origin: false,
-            methods: '',
-            allowedHeaders: '',
-            credentials: false,
-        };
-
+    app.enableCors({
+    origin: (origin, callback) =>
+    {
         const whitelist = ['http://localhost:3000', 'http://localhost:5173'];
-        const origin = req.header('Origin');
 
-        if (whitelist.includes(origin) || origin.includes('vercel.app')) {
-            corsOptions.origin = true;
-            corsOptions.methods = 'GET,HEAD,PUT,PATCH,POST,DELETE';
-            corsOptions.allowedHeaders = 'Content-Type, Accept, Authorization';
-            corsOptions.credentials = true;
+        const allowed = !origin || whitelist.includes(origin) || origin.includes('vercel.app');
+        if (allowed) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
         }
-        callback(null, corsOptions);
-    });
+    },
+    credentials: true,
+});
 
     return app;
 };
