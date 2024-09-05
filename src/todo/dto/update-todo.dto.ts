@@ -6,4 +6,12 @@ export class UpdateTodoDto {
     @IsBoolean()
     @IsOptional()
     completed?: boolean;
+
+    @ApiProperty({description: 'Title of the todo item', required: false})
+    @IsOptional()
+    title?: string;
+
+    @ApiProperty({description: 'Description of the todo item', required: false})
+    @IsOptional()
+    description?: string;
 }

@@ -14,6 +14,10 @@ export class Todo {
     @Prop({default: false})
     completed: boolean;
 
+    @ApiProperty({description: 'Description of the todo item', required: false})
+    @Prop()
+    description?: string;
+
     @ApiProperty({description: 'User ID associated with the todo item'})
     @Prop({type: Types.ObjectId, ref: 'User', required: true})
     user: Types.ObjectId;

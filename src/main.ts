@@ -6,11 +6,6 @@ const createAndSetupApp = async () => {
     const app = await NestFactory.create(AppModule, {bodyParser: true});
     setupSwagger(app);
 
-    app.use((req, res, next) => {
-        console.log('Received request:', req.method, req.url, 'from', req.headers.origin);
-        next();
-    });
-    // Включение CORS для разработки
     app.enableCors({
         origin: (origin, callback) => {
 
@@ -31,7 +26,10 @@ const createAndSetupApp = async () => {
 async function bootstrap() {
     const app = await createAndSetupApp();
 
-    await app.listen(3000);
+    await app.listen(3000, () => {
+            console.log('Server is running on http://localhost:3000');
+        }
+    )
 }
 
 bootstrap();

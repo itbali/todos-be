@@ -17,7 +17,11 @@ export class TodoController {
     @ApiResponse({status: 201, description: 'Todo successfully created'})
     @Post()
     async create(@Body() createTodoDto: CreateTodoDto, @Request() req) {
-        return this.todoService.create(createTodoDto.title, req.user._id);
+        return this.todoService.create({
+          title: createTodoDto.title,
+          description: createTodoDto.description,
+          userId: req.user._id
+        })
     }
 
     @ApiOperation({summary: 'Get all todos for the logged-in user with filtering and pagination'})
@@ -43,16 +47,29 @@ export class TodoController {
 
     @ApiOperation({summary: 'Get a todo by title'})
     @ApiResponse({status: 200, description: 'Todo retrieved successfully'})
-    @Get(':title')
+    @Get('/title/:title')
     async findByTitle(@Param('title') title: string, @Request() req) {
         return this.todoService.findByTitle(title, req.user._id);
+    }
+
+    @ApiOperation({summary: 'Get a todo by ID'})
+    @ApiResponse({status: 200, description: 'Todo retrieved successfully'})
+    @Get(':id')
+    async findById(@Param('id') id: string, @Request() req) {
+        return this.todoService.findById(id, req.user._id);
     }
 
     @ApiOperation({summary: 'Update a todo item'})
     @ApiResponse({status: 200, description: 'Todo updated successfully'})
     @Patch(':id')
     async update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto, @Request() req) {
-        return this.todoService.update(id, updateTodoDto.completed, req.user._id);
+        return this.todoService.update({
+          id,
+          completed: updateTodoDto.completed,
+          title: updateTodoDto.title,
+          description: updateTodoDto.description,
+          userId: req.user._id
+        })
     }
 
     @ApiOperation({summary: 'Delete a todo item'})
