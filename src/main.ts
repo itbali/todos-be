@@ -17,6 +17,7 @@ const createAndSetupApp = async () => {
                 callback(new Error('Not allowed by CORS'));
             }
         },
+        allowedHeaders: 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Observe, Authorization',
         credentials: true,
     });
 
