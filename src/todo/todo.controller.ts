@@ -49,6 +49,9 @@ export class TodoController {
     @ApiResponse({status: 200, description: 'Todo retrieved successfully'})
     @Get('/title/:title')
     async findByTitle(@Param('title') title: string, @Request() req) {
+        if(!title) {
+            return this.todoService.findAll(req.user._id);
+        }
         return this.todoService.findByTitle(title, req.user._id);
     }
 
