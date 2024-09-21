@@ -35,6 +35,12 @@ export class TodoService {
     }
 
     async findByTitle(title: string, userId: string): Promise<Todo[]> {
+        if (!title) {
+            return this.todoModel
+                .find({user: userId})
+                .select('-__v -user');
+        }
+
         return this.todoModel
             .find({title: {
                 $regex: title.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'),
