@@ -4,6 +4,7 @@ import {TodoService} from './todo.service';
 import {CreateTodoDto} from './dto/create-todo.dto';
 import {UpdateTodoDto} from './dto/update-todo.dto';
 import {ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
+import {Todo} from "./schemas/todo.schema";
 
 @ApiTags('todos')
 @ApiBearerAuth()
@@ -14,7 +15,11 @@ export class TodoController {
     }
 
     @ApiOperation({summary: 'Create a new todo item'})
-    @ApiResponse({status: 201, description: 'Todo successfully created'})
+    @ApiResponse({
+        status: 201,
+        description: 'Todo successfully created',
+        type: Todo,
+    })
     @Post()
     async create(@Body() createTodoDto: CreateTodoDto, @Request() req) {
         return this.todoService.create({
@@ -25,7 +30,11 @@ export class TodoController {
     }
 
     @ApiOperation({summary: 'Get all todos for the logged-in user with filtering and pagination'})
-    @ApiResponse({status: 200, description: 'Todos retrieved successfully'})
+    @ApiResponse({
+        status: 200,
+        description: 'Todos retrieved successfully',
+        type: [Todo],
+    })
     @ApiQuery({name: 'completed', required: false, type: Boolean, description: 'Filter by completion status'})
     @ApiQuery({name: 'limit', required: false, type: Number, description: 'Limit the number of results'})
     @ApiQuery({name: 'page', required: false, type: Number, description: 'Page number for pagination'})
@@ -46,7 +55,11 @@ export class TodoController {
     }
 
     @ApiOperation({summary: 'Get a todo by title'})
-    @ApiResponse({status: 200, description: 'Todo retrieved successfully'})
+    @ApiResponse({
+        status: 200,
+        description: 'Todo retrieved successfully',
+        type: [Todo],
+    })
     @Get('/title/:title')
     async findByTitle(@Param('title') title: string, @Request() req) {
         if(!title) {
@@ -56,14 +69,22 @@ export class TodoController {
     }
 
     @ApiOperation({summary: 'Get a todo by ID'})
-    @ApiResponse({status: 200, description: 'Todo retrieved successfully'})
+    @ApiResponse({
+        status: 200,
+        description: 'Todo retrieved successfully',
+        type: Todo,
+    })
     @Get(':id')
     async findById(@Param('id') id: string, @Request() req) {
         return this.todoService.findById(id, req.user._id);
     }
 
     @ApiOperation({summary: 'Update a todo item'})
-    @ApiResponse({status: 200, description: 'Todo updated successfully'})
+    @ApiResponse({
+        status: 200,
+        description: 'Todo updated successfully',
+        type: Todo,
+    })
     @Patch(':id')
     async update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto, @Request() req) {
         return this.todoService.update({
@@ -76,7 +97,11 @@ export class TodoController {
     }
 
     @ApiOperation({summary: 'Delete a todo item'})
-    @ApiResponse({status: 200, description: 'Todo deleted successfully'})
+    @ApiResponse({
+        status: 200,
+        description: 'Todo deleted successfully',
+        type: Todo,
+    })
     @Delete(':id')
     async delete(@Param('id') id: string, @Request() req) {
         return this.todoService.delete(id, req.user._id);

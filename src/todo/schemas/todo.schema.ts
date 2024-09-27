@@ -6,6 +6,8 @@ export type TodoDocument = Todo & Document;
 
 @Schema({timestamps: true})
 export class Todo {
+    _id: Types.ObjectId;
+
     @ApiProperty({description: 'Title of the todo item'})
     @Prop({required: true})
     title: string;

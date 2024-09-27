@@ -2,6 +2,8 @@ import {Body, Controller, Post} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {AuthService} from './auth.service';
 import {AuthDto} from './dto/auth.dto';
+import {RegisterOutputDto} from "./dto/registerOutput.dto";
+import {LoginOutputDto} from "./dto/loginOutput.dto";
 
 @ApiTags('auth')
 @Controller('auth')
@@ -10,7 +12,11 @@ export class AuthController {
     }
 
     @ApiOperation({summary: 'Register a new user'})
-    @ApiResponse({status: 201, description: 'User successfully registered'})
+    @ApiResponse({
+        status: 201,
+        description: 'User successfully registered',
+        type: RegisterOutputDto
+    })
     @ApiResponse({status: 409, description: 'Username already exists'})
     @Post('register')
     async register(@Body() authDto: AuthDto) {
@@ -18,7 +24,11 @@ export class AuthController {
     }
 
     @ApiOperation({summary: 'Login a user'})
-    @ApiResponse({status: 200, description: 'User successfully logged in'})
+    @ApiResponse({
+        status: 200,
+        description: 'User successfully logged in',
+        type: LoginOutputDto,
+    })
     @ApiResponse({status: 401, description: 'Invalid credentials'})
     @Post('login')
     async login(@Body() authDto: AuthDto) {
