@@ -4,7 +4,7 @@ import {TodoService} from './todo.service';
 import {CreateTodoDto} from './dto/create-todo.dto';
 import {UpdateTodoDto} from './dto/update-todo.dto';
 import {ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {Todo} from "./schemas/todo.schema";
+import {TodoOutputDto} from "./dto/todo-output.dto";
 
 @ApiTags('todos')
 @ApiBearerAuth()
@@ -18,14 +18,14 @@ export class TodoController {
     @ApiResponse({
         status: 201,
         description: 'Todo successfully created',
-        type: Todo,
+        type: TodoOutputDto,
     })
     @Post()
     async create(@Body() createTodoDto: CreateTodoDto, @Request() req) {
         return this.todoService.create({
-          title: createTodoDto.title,
-          description: createTodoDto.description,
-          userId: req.user._id
+            title: createTodoDto.title,
+            description: createTodoDto.description,
+            userId: req.user._id
         })
     }
 
@@ -33,17 +33,19 @@ export class TodoController {
     @ApiResponse({
         status: 200,
         description: 'Todos retrieved successfully',
-        type: [Todo],
+        type: [TodoOutputDto],
     })
     @ApiQuery({name: 'completed', required: false, type: Boolean, description: 'Filter by completion status'})
     @ApiQuery({name: 'limit', required: false, type: Number, description: 'Limit the number of results'})
     @ApiQuery({name: 'page', required: false, type: Number, description: 'Page number for pagination'})
+    @ApiQuery({name: 'search', required: false, type: String, description: 'Search by title'})
     @Get()
     async findAll(
         @Request() req,
         @Query('completed') completed?: boolean,
-        @Query('limit') limit = 10,  // Задаем значение по умолчанию
-        @Query('page') page = 1       // Задаем значение по умолчанию
+        @Query('limit') limit = 100,  // Задаем значение по умолчанию
+        @Query('page') page = 1,      // Задаем значение по умолчанию
+        @Query('search') search?: string,
     ) {
         const filter = {};
         if (completed !== undefined) {
@@ -51,28 +53,14 @@ export class TodoController {
         }
 
         const skip = (page - 1) * limit;
-        return this.todoService.findAll(req.user._id, filter, limit, skip);
-    }
-
-    @ApiOperation({summary: 'Get a todo by title'})
-    @ApiResponse({
-        status: 200,
-        description: 'Todo retrieved successfully',
-        type: [Todo],
-    })
-    @Get('/title/:title')
-    async findByTitle(@Param('title') title: string, @Request() req) {
-        if(!title) {
-            return this.todoService.findAll(req.user._id);
-        }
-        return this.todoService.findByTitle(title, req.user._id);
+        return this.todoService.findAll(req.user._id, filter, limit, skip, search);
     }
 
     @ApiOperation({summary: 'Get a todo by ID'})
     @ApiResponse({
         status: 200,
         description: 'Todo retrieved successfully',
-        type: Todo,
+        type: TodoOutputDto,
     })
     @Get(':id')
     async findById(@Param('id') id: string, @Request() req) {
@@ -83,16 +71,16 @@ export class TodoController {
     @ApiResponse({
         status: 200,
         description: 'Todo updated successfully',
-        type: Todo,
+        type: TodoOutputDto,
     })
     @Patch(':id')
     async update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto, @Request() req) {
         return this.todoService.update({
-          id,
-          completed: updateTodoDto.completed,
-          title: updateTodoDto.title,
-          description: updateTodoDto.description,
-          userId: req.user._id
+            id,
+            completed: updateTodoDto.completed,
+            title: updateTodoDto.title,
+            description: updateTodoDto.description,
+            userId: req.user._id
         })
     }
 
@@ -100,7 +88,7 @@ export class TodoController {
     @ApiResponse({
         status: 200,
         description: 'Todo deleted successfully',
-        type: Todo,
+        type: TodoOutputDto,
     })
     @Delete(':id')
     async delete(@Param('id') id: string, @Request() req) {

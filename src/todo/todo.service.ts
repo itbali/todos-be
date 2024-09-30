@@ -19,9 +19,9 @@ export class TodoService {
         });
     }
 
-    async findAll(userId: string, filter?: any, limit?: number, skip?: number): Promise<Todo[]> {
+    async findAll(userId: string, filter?: any, limit?: number, skip?: number, search?: string): Promise<Todo[]> {
         return this.todoModel
-            .find({user: userId, ...filter})
+            .find({user: userId, ...filter, ...(search ? {title: {$regex: search, $options: 'i'}} : {})})
             .limit(limit)
             .skip(skip)
             .select('-__v -user');
