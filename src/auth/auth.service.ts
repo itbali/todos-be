@@ -4,6 +4,7 @@ import {Model} from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import {JwtService} from '@nestjs/jwt';
 import {User, UserDocument} from './schemas/user.schema';
+import {LoginOutputDto} from "./dto/loginOutput.dto";
 
 @Injectable()
 export class AuthService {
@@ -30,7 +31,7 @@ export class AuthService {
         });
     }
 
-    async login(username: string, password: string): Promise<{ access_token: string }> {
+    async login(username: string, password: string): Promise<LoginOutputDto> {
         const user = await this.userModel.findOne({username}).exec();
         if (!user || !(await bcrypt.compare(password, user.password))) {
             throw new UnauthorizedException('Invalid credentials');
@@ -39,6 +40,7 @@ export class AuthService {
         const payload = {username: user.username, sub: user._id};
         return {
             access_token: this.jwtService.sign(payload, {expiresIn: '1d'}),
+            username: user.username,
         };
     }
 
