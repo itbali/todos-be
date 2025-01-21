@@ -1,36 +1,49 @@
-import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
-import {Document, Types} from 'mongoose';
-import {ApiProperty} from '@nestjs/swagger';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
+import { ApiProperty } from '@nestjs/swagger';
 
 export type TodoDocument = Todo & Document;
 
-@Schema({timestamps: true})
+@Schema({ timestamps: true })
 export class Todo {
-    _id: Types.ObjectId;
+  _id: Types.ObjectId;
 
-    @ApiProperty({description: 'Title of the todo item'})
-    @Prop({required: true})
-    title: string;
+  @ApiProperty({ description: 'Title of the todo item' })
+  @Prop({ required: true })
+  title: string;
 
-    @ApiProperty({description: 'Completion status of the todo item', default: false})
-    @Prop({default: false})
-    completed: boolean;
+  @ApiProperty({
+    description: 'Completion status of the todo item',
+    default: false,
+  })
+  @Prop({ default: false })
+  completed: boolean;
 
-    @ApiProperty({description: 'Description of the todo item', required: false})
-    @Prop()
-    description?: string;
+  @ApiProperty({ description: 'Description of the todo item', required: false })
+  @Prop()
+  description?: string;
 
-    @ApiProperty({description: 'User ID associated with the todo item'})
-    @Prop({type: Types.ObjectId, ref: 'User', required: true})
-    user: Types.ObjectId;
+  @ApiProperty({ description: 'User ID associated with the todo item' })
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  user: Types.ObjectId;
 
-    @ApiProperty({description: 'Date of creation', example: '2024-08-21T12:00:00Z'})
-    @Prop()
-    createdAt: Date;
+  @ApiProperty({ description: 'Order of the todo item', example: 1 })
+  @Prop()
+  order: number;
 
-    @ApiProperty({description: 'Date of last update', example: '2024-08-21T12:00:00Z'})
-    @Prop()
-    updatedAt: Date;
+  @ApiProperty({
+    description: 'Date of creation',
+    example: '2024-08-21T12:00:00Z',
+  })
+  @Prop()
+  createdAt: Date;
+
+  @ApiProperty({
+    description: 'Date of last update',
+    example: '2024-08-21T12:00:00Z',
+  })
+  @Prop()
+  updatedAt: Date;
 }
 
 export const TodoSchema = SchemaFactory.createForClass(Todo);
